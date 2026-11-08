@@ -108,12 +108,60 @@
     <div class="card">
         <h2>🤖 AI Smart Assistant Analytics</h2>
         <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 0;">Evaluates stock thresholds and builds real-time restock recommendations.</p>
-        <button onclick="runAiReport()">Run Health & Restock Analysis</button>
+        <button type="button" onclick="runAiReport()">Run Health & Restock Analysis</button>
         <div id="ai-output">Click above to analyze warehouse status...</div>
     </div>
 </div>
 
 <script>
     const SUPABASE_URL = "https://ekllsezlqjmaycvzohwl.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_UQrFI
+    const SUPABASE_KEY = "sb_publishable_UQrFIk6HgLVwDckmfvrb9w_a35vjL5j";
 
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+    };
+
+    async function runAiReport() {
+        const output = document.getElementById("ai-output");
+        output.innerText = "🤖 Analyzing cloud inventory data...";
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
+            const data = await res.json();
+
+            if (!data || data.length === 0) {
+                output.innerText = "No data available in the cloud database to analyze.";
+                return;
+            }
+
+            const totalItems = data.length;
+            const totalUnits = data.reduce((sum, p) => sum + (p.current_stock || 0), 0);
+            const criticalItems = data.filter(p => (p.current_stock || 0) <= (p.safety_stock || 5));
+
+            let report = `📊 Warehouse Overview:\n`;
+            report += `  • Tracked Product Lines: ${totalItems}\n`;
+            report += `  • Total Physical Stock Units: ${totalUnits}\n`;
+            report += `  • Items Needing Action: ${criticalItems.length}\n\n`;
+
+            if (criticalItems.length > 0) {
+                report += `🛒 AI Restock Recommendations:\n`;
+                criticalItems.forEach(item => {
+                    const shortage = ((item.safety_stock || 5) * 2) - (item.current_stock || 0);
+                    report += `  - [CRITICAL] '${item.title}' (SKU: ${item.sku})\n    -> Suggested Order Qty: ${Math.max(shortage, 5)} units\n`;
+                });
+            } else {
+                report += `✨ AI Status: All stock levels optimal!`;
+            }
+
+            output.innerText = report;
+        } catch (err) {
+            console.error(err);
+            output.innerText = "❌ Error connecting to cloud database for analysis.";
+        }
+    }
+</script>
+
+</body>
+</html>
