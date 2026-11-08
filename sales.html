@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales & Transactions - Cloud System</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        nav {
+            display: flex;
+            gap: 8px;
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        nav a.active, nav a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+            color: #60a5fa;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 14px;
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            color: white;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        .status-msg {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .status-success {
+            background-color: rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+        .status-error {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav>
+        <a href="index.html">📊 Dashboard</a>
+        <a href="inventory.html">📦 Inventory</a>
+        <a href="add-product.html">➕ Add Product</a>
+        <a href="sales.html" class="active">🛒 Sales & Orders</a>
+    </nav>
+
+    <h1>Record Outgoing Sale</h1>
+
+    <div class="card">
+        <h2>Process Transaction</h2>
+        
+        <label>Select Product (by SKU)</label>
+        <select id="sale-sku">
+            <option value="">Loading live inventory products...</option>
+        </select>
+        
+        <label>Quantity Sold</label>
+        <input type="number" id="sale-qty" placeholder="1" min="1" value="1">
+        
+        <button onclick="processSale()">Process & Deduct Stock</button>
+
+        <div id="status-box" class="status-msg"></div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://ekllsezlqjmaycvzohwl.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_UQrFIk6HgLVwDckmfvrb9w_a35vjL5j";
+
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+    };
+
+    let inventoryList = [];
+
+    function showStatus(message, isError = false) {
+        const box = document.getElementById("status-box");
+        box.style.display = "block";
+        box.className = `status-msg ${isError ? 'status-error' : 'status-success'}`;
+        box.innerText = message;
+    }
+
+    async function loadProducts() {
+        const select = document.getElementById("sale-sku");
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
+            inventoryList = await res.json();
+
+            if (!inventoryList || inventoryList.length === 0) {
+                select.innerHTML = `<option value="">No products available</option>`;
+                return;
+            }
+
+            select.innerHTML = inventoryList.map(p => 
+                `<option value="${p.sku}">${p.title} (SKU: ${p.sku}) — Available: ${p.current_stock}</option>`
+            ).join('');
+        } catch (err) {
+            console.error(err);
+            select.innerHTML = `<option value="">Error loading products</option>`;
+        }
+    }
+
+    async function processSale() {
+        const sku = document.getElementById("sale-sku").value;
+        const qty = parseInt(document.getElementById("sale-qty").value);
+
+        if (!sku || isNaN(qty) || qty <= 0) {
+            showStatus("❌ Select a valid product and enter a positive quantity.", true);
+            return;
+        }
+
+        const product = inventoryList.find(p => p.sku === sku);
+        if (!product) {
+            showStatus("❌ Selected product not found.", true);
+            return;
+        }
+
+        if (product.current_stock < qty) {
+            showStatus(`❌ Insufficient stock! Only ${product.current_stock} units available.`, true);
+            return;
+        }
+
+        const updatedStock = product.current_stock - qty;
+
+        showStatus("Processing transaction...");
+
+        try {
+            const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/products?sku=eq.${sku}`, {
+                method: "PATCH",
+                headers: { ...headers, "Prefer": "return=representation" },
+                body: JSON.stringify({ current_stock: updatedStock })
+            });
+
+            if (patchRes.ok) {
+                showStatus(`✅ Sale recorded! Sold ${qty} unit(s) of '${product.title}'. Remaining stock: ${updatedStock}.`);
+                document.getElementById("sale-qty").value = "1";
+                loadProducts();
+            } else {
+                const errData = await patchRes.json();
+                showStatus(`❌ Error updating inventory: ${errData.message || 'Update failed'}`, true);
+            }
+        } catch (err) {
+            console.error(err);
+            showStatus("❌ Connection error while processing sale.", true);
+        }
+    }
+
+    loadProducts();
+</script>
+
+</body>
+</html>
