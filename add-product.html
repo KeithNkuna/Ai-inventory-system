@@ -1,166 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product - Cloud System</title>
-    <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 16px;
-        }
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        nav {
-            display: flex;
-            gap: 8px;
-            background-color: var(--card-bg);
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-        }
-        nav a {
-            color: #94a3b8;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-        nav a.active, nav a:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-        h1 {
-            font-size: 1.4rem;
-            margin-bottom: 16px;
-            color: #60a5fa;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            font-size: 1.1rem;
-            margin-top: 0;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 8px;
-        }
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 14px;
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 6px;
-            color: white;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-        }
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            margin-top: 8px;
-        }
-        button:hover {
-            background-color: var(--primary-hover);
-        }
-        .status-msg {
-            margin-top: 12px;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            display: none;
-        }
-        .status-success {
-            background-color: rgba(34, 197, 94, 0.2);
-            color: var(--accent-green);
-            border: 1px solid var(--accent-green);
-        }
-        .status-error {
-            background-color: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            border: 1px solid var(--accent-red);
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <nav>
-        <a href="index.html">📊 Dashboard</a>
-        <a href="inventory.html">📦 Inventory</a>
-        <a href="add-product.html" class="active">➕ Add Product</a>
-        <a href="sales.html">🛒 Sales & Orders</a>
-    </nav>
-
-    <h1>New Inventory Item</h1>
-
-    <div class="card">
-        <h2>Product Specification Details</h2>
-        
-        <label>SKU Code</label>
-        <input type="text" id="add-sku" placeholder="e.g., ELEC-003">
-        
-        <label>Product Title</label>
-        <input type="text" id="add-title" placeholder="e.g., Wireless Ergonomic Keyboard">
-        
-        <label>Initial Stock Quantity</label>
-        <input type="number" id="add-stock" placeholder="50">
-        
-        <label>Safety Stock Threshold</label>
-        <input type="number" id="add-safety" placeholder="10">
-        
-        <label>Cost Price (Unit Cost)</label>
-        <input type="number" step="0.01" id="add-cost" placeholder="150.00">
-        
-        <label>Selling Price (Retail Price)</label>
-        <input type="number" step="0.01" id="add-selling" placeholder="299.99">
-        
-        <button onclick="addProduct()">Save Product to Cloud Database</button>
-
-        <div id="status-box" class="status-msg"></div>
-    </div>
-</div>
-
 <script>
     const SUPABASE_URL = "https://ekllsezlqjmaycvzohwl.supabase.co";
     const SUPABASE_KEY = "sb_publishable_UQrFIk6HgLVwDckmfvrb9w_a35vjL5j";
@@ -179,7 +16,63 @@
     }
 
     async function addProduct() {
-        const sku = document.getElementById("add-sku").value.trim();
-        const title = document.getElementById("add-title").value.trim();
-        const stock = parseInt(document.getElementById("add-stock").value);
-        const safety = parseInt(document.getElementById("add-safety").value);
+        try {
+            const skuEl = document.getElementById("add-sku");
+            const titleEl = document.getElementById("add-title");
+            const stockEl = document.getElementById("add-stock");
+            const safetyEl = document.getElementById("add-safety");
+            const costEl = document.getElementById("add-cost");
+            const sellingEl = document.getElementById("add-selling");
+
+            if (!skuEl || !titleEl || !stockEl || !safetyEl || !costEl || !sellingEl) {
+                alert("DOM elements missing!");
+                return;
+            }
+
+            const sku = skuEl.value.trim();
+            const title = titleEl.value.trim();
+            const stock = parseInt(stockEl.value);
+            const safety = parseInt(safetyEl.value);
+            const cost = parseFloat(costEl.value);
+            const selling = parseFloat(sellingEl.value);
+
+            if (!sku || !title || isNaN(stock) || isNaN(safety) || isNaN(cost) || isNaN(selling)) {
+                showStatus("❌ Please fill in all required fields with valid values.", true);
+                return;
+            }
+
+            const payload = {
+                sku: sku,
+                title: title,
+                current_stock: stock,
+                safety_stock: safety,
+                cost_price: cost,
+                selling_price: selling
+            };
+
+            showStatus("Saving item to cloud database...");
+
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {
+                method: "POST",
+                headers: { ...headers, "Prefer": "return=representation" },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                showStatus(`✅ Success! Product '${title}' (${sku}) added to database.`);
+                skuEl.value = "";
+                titleEl.value = "";
+                stockEl.value = "";
+                safetyEl.value = "";
+                costEl.value = "";
+                sellingEl.value = "";
+            } else {
+                const errData = await res.json();
+                showStatus(`❌ Database Error: ${errData.message || 'Failed to insert row.'}`, true);
+            }
+        } catch (err) {
+            console.error(err);
+            showStatus(`❌ Error: ${err.message}`, true);
+        }
+    }
+</script>
