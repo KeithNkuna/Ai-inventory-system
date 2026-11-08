@@ -1,1 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard - Cloud System</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        nav {
+            display: flex;
+            gap: 8px;
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        nav a.active, nav a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+            color: #60a5fa;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        #ai-output {
+            background-color: #0f172a;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            border: 1px solid #334155;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav>
+        <a href="index.html" class="active">📊 Dashboard</a>
+        <a href="inventory.html">📦 Inventory</a>
+        <a href="add-product.html">➕ Add Product</a>
+        <a href="sales.html">🛒 Sales & Orders</a>
+    </nav>
+
+    <h1>System Dashboard</h1>
+
+    <div class="card">
+        <h2>🤖 AI Smart Assistant Analytics</h2>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 0;">Evaluates stock thresholds and builds real-time restock recommendations.</p>
+        <button onclick="runAiReport()">Run Health & Restock Analysis</button>
+        <div id="ai-output">Click above to analyze warehouse status...</div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://ekllsezlqjmaycvzohwl.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_UQrFI
 
