@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Dashboard - Cloud System</title>
+    <title>Inventory Dashboard v2 - Cloud System</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -107,10 +107,10 @@
     <h1>System Dashboard</h1>
 
     <div class="card">
-        <h2>🤖 AI Itemized Stock Breakdown</h2>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 0;">Analyzes individual product groups and tracks safety limits.</p>
+        <h2>🤖 Itemized Stock & Group Analysis</h2>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 0;">Displays individual stock counts, pricing, and status grouped by item.</p>
         <button type="button" onclick="runAiReport()">Run Itemized Analysis</button>
-        <div id="ai-output">Click above to load item groups...</div>
+        <div id="ai-output">Click above to analyze item groups...</div>
     </div>
 </div>
 
@@ -126,41 +126,44 @@
 
     async function runAiReport() {
         const output = document.getElementById("ai-output");
-        output.innerText = "🤖 Grouping and analyzing product stock...";
+        output.innerText = "🤖 Fetching itemized stock groups...";
 
         try {
             const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
             const data = await res.json();
 
             if (!data || data.length === 0) {
-                output.innerText = "No products found in the cloud database.";
+                output.innerText = "No products found in database.";
                 return;
             }
 
-            let report = `📦 Itemized Stock Groups (${data.length} Total Lines):\n\n`;
+            let report = `📦 ITEM GROUPS BREAKDOWN (${data.length} Products Found):\n`;
+            report += `========================================\n\n`;
 
             data.forEach((item, index) => {
                 const stock = item.current_stock || 0;
                 const safety = item.safety_stock || 5;
-                const isCritical = stock <= safety;
-                const statusIcon = isCritical ? "🔴 [CRITICAL]" : "🟢 [OPTIMAL]";
+                const isLow = stock <= safety;
+                const statusTag = isLow ? "🔴 [RESTOCK NEEDED]" : "🟢 [STOCK HEALTHY]";
 
-                report += `[Group ${index + 1}] ${item.title} (SKU: ${item.sku})\n`;
-                report += `  • Status: ${statusIcon}\n`;
-                report += `  • Current Units: ${stock} | Safety Limit: ${safety}\n`;
+                report += `[Group ${index + 1}] ${item.title}\n`;
+                report += `  • SKU: ${item.sku}\n`;
+                report += `  • Physical Stock: ${stock} units\n`;
+                report += `  • Safety Threshold: ${safety} units\n`;
+                report += `  • Status: ${statusTag}\n`;
                 report += `  • Pricing: Cost R${item.cost_price || 0} | Sell R${item.selling_price || 0}\n`;
                 
-                if (isCritical) {
-                    const shortage = (safety * 2) - stock;
-                    report += `  ⚠️ Action: Restock recommended (~${Math.max(shortage, 5)} units)\n`;
+                if (isLow) {
+                    const orderQty = Math.max((safety * 2) - stock, 5);
+                    report += `  -> Suggested Order: ${orderQty} units\n`;
                 }
-                report += `\n`;
+                report += `----------------------------------------\n`;
             });
 
             output.innerText = report;
         } catch (err) {
             console.error(err);
-            output.innerText = "❌ Error connecting to cloud database.";
+            output.innerText = "❌ Error fetching itemized stock data.";
         }
     }
 </script>
