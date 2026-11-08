@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - Cloud System</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-red: #ef4444;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        nav {
+            display: flex;
+            gap: 8px;
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        nav a.active, nav a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+            color: #60a5fa;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 8px;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        th {
+            color: #94a3b8;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .badge-critical { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .badge-reorder { background-color: rgba(234, 179, 8, 0.2); color: var(--accent-yellow); }
+        .badge-healthy { background-color: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav>
+        <a href="index.html">📊 Dashboard</a>
+        <a href="inventory.html" class="active">📦 Inventory</a>
+        <a href="add-product.html">➕ Add Product</a>
+        <a href="sales.html">🛒 Sales & Orders</a>
+    </nav>
+
+    <h1>Inventory Management</h1>
+
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="margin: 0; border: none; padding: 0;">Live Cloud Stock</h2>
+            <button onclick="fetchInventory()">Refresh List</button>
+        </div>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Title</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-table-body">
+                    <tr><td colspan="4" style="text-align: center;">Loading inventory from cloud...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://ekllsezlqjmaycvzohwl.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_UQrFIk6HgLVwDckmfvrb9w_a35vjL5j";
+
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+    };
+
+    async function fetchInventory() {
+        const tbody = document.getElementById("inventory-table-body");
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">Fetching live data...</td></tr>`;
+        
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
+            const data = await res.json();
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center;">No products found in database.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = "";
+            data.forEach(p => {
+                const stock = p.current_stock || 0;
+                const safety = p.safety_stock || 5;
+                let badgeClass = "badge-healthy";
+                let statusText = "HEALTHY ✅";
+
+                if (stock <= safety) {
+                    badgeClass = "badge-critical";
+                    statusText = "CRITICAL ⚠️";
+                } else if (stock <= safety + 5) {
+                    badgeClass = "badge-reorder";
+                    statusText = "REORDER ⚡";
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${p.sku}</b></td>
+                        <td>${p.title}</td>
+                        <td>${stock}</td>
+                        <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            });
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--accent-red);">Error loading inventory.</td></tr>`;
+        }
+    }
+
+    // Load inventory on startup
+    fetchInventory();
+</script>
+
+</body>
+</html>
