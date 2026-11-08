@@ -90,6 +90,7 @@
             white-space: pre-wrap;
             border: 1px solid #334155;
             margin-top: 12px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -106,10 +107,10 @@
     <h1>System Dashboard</h1>
 
     <div class="card">
-        <h2>🤖 AI Smart Assistant Analytics</h2>
-        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 0;">Evaluates stock thresholds and builds real-time restock recommendations.</p>
-        <button type="button" onclick="runAiReport()">Run Health & Restock Analysis</button>
-        <div id="ai-output">Click above to analyze warehouse status...</div>
+        <h2>🤖 AI Itemized Stock Breakdown</h2>
+        <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 0;">Analyzes individual product groups and tracks safety limits.</p>
+        <button type="button" onclick="runAiReport()">Run Itemized Analysis</button>
+        <div id="ai-output">Click above to load item groups...</div>
     </div>
 </div>
 
@@ -125,40 +126,41 @@
 
     async function runAiReport() {
         const output = document.getElementById("ai-output");
-        output.innerText = "🤖 Analyzing cloud inventory data...";
+        output.innerText = "🤖 Grouping and analyzing product stock...";
 
         try {
             const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
             const data = await res.json();
 
             if (!data || data.length === 0) {
-                output.innerText = "No data available in the cloud database to analyze.";
+                output.innerText = "No products found in the cloud database.";
                 return;
             }
 
-            const totalItems = data.length;
-            const totalUnits = data.reduce((sum, p) => sum + (p.current_stock || 0), 0);
-            const criticalItems = data.filter(p => (p.current_stock || 0) <= (p.safety_stock || 5));
+            let report = `📦 Itemized Stock Groups (${data.length} Total Lines):\n\n`;
 
-            let report = `📊 Warehouse Overview:\n`;
-            report += `  • Tracked Product Lines: ${totalItems}\n`;
-            report += `  • Total Physical Stock Units: ${totalUnits}\n`;
-            report += `  • Items Needing Action: ${criticalItems.length}\n\n`;
+            data.forEach((item, index) => {
+                const stock = item.current_stock || 0;
+                const safety = item.safety_stock || 5;
+                const isCritical = stock <= safety;
+                const statusIcon = isCritical ? "🔴 [CRITICAL]" : "🟢 [OPTIMAL]";
 
-            if (criticalItems.length > 0) {
-                report += `🛒 AI Restock Recommendations:\n`;
-                criticalItems.forEach(item => {
-                    const shortage = ((item.safety_stock || 5) * 2) - (item.current_stock || 0);
-                    report += `  - [CRITICAL] '${item.title}' (SKU: ${item.sku})\n    -> Suggested Order Qty: ${Math.max(shortage, 5)} units\n`;
-                });
-            } else {
-                report += `✨ AI Status: All stock levels optimal!`;
-            }
+                report += `[Group ${index + 1}] ${item.title} (SKU: ${item.sku})\n`;
+                report += `  • Status: ${statusIcon}\n`;
+                report += `  • Current Units: ${stock} | Safety Limit: ${safety}\n`;
+                report += `  • Pricing: Cost R${item.cost_price || 0} | Sell R${item.selling_price || 0}\n`;
+                
+                if (isCritical) {
+                    const shortage = (safety * 2) - stock;
+                    report += `  ⚠️ Action: Restock recommended (~${Math.max(shortage, 5)} units)\n`;
+                }
+                report += `\n`;
+            });
 
             output.innerText = report;
         } catch (err) {
             console.error(err);
-            output.innerText = "❌ Error connecting to cloud database for analysis.";
+            output.innerText = "❌ Error connecting to cloud database.";
         }
     }
 </script>
