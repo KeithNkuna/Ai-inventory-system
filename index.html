@@ -25,9 +25,9 @@
             margin: 0;
             padding: 12px;
         }
-        .container { max-width: 800px; margin: 0 auto; }
+        .container { max-width: 900px; margin: 0 auto; }
         
-        /* Top Navigation Header */
+        /* Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -39,12 +39,7 @@
             border: 1px solid var(--border);
         }
         .brand-title { font-weight: bold; font-size: 1.1rem; color: #60a5fa; }
-        .mode-toggle {
-            display: flex;
-            background: var(--bg);
-            padding: 4px;
-            border-radius: 8px;
-        }
+        .mode-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 8px; }
         .mode-btn {
             padding: 6px 12px;
             border: none;
@@ -57,13 +52,8 @@
         }
         .mode-btn.active { background: var(--primary); color: white; }
 
-        /* Secondary Sub-Tabs for Retailer Mode */
-        .sub-nav {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 16px;
-            overflow-x: auto;
-        }
+        /* Navigation Tabs */
+        .sub-nav { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
         .sub-nav button {
             background: var(--card-bg);
             color: var(--text-muted);
@@ -74,17 +64,13 @@
             font-size: 0.85rem;
             white-space: nowrap;
         }
-        .sub-nav button.active {
-            background: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
+        .sub-nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
 
-        /* Views */
+        /* View Panels */
         .view-panel { display: none; }
         .view-panel.active { display: block; }
 
-        /* General UI Elements */
+        /* UI Cards & Buttons */
         .card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -117,13 +103,11 @@
         }
         .btn-action:hover { background: var(--primary-hover); }
         .btn-success { background: var(--green); }
+        .btn-danger { background: var(--red); }
+        .btn-small { width: auto; padding: 6px 12px; font-size: 0.8rem; margin-top: 0; }
         
-        /* Grid layout for Customer Catalog */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
-        }
+        /* Grid and Flex Containers */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
         .product-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -135,13 +119,7 @@
         }
         .product-title { font-weight: bold; font-size: 1rem; }
         .product-price { color: #60a5fa; font-weight: bold; margin-top: 4px; }
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
         .badge-instock { background: rgba(34,197,94,0.2); color: var(--green); }
         .badge-lowstock { background: rgba(239,68,68,0.2); color: var(--red); }
         
@@ -156,21 +134,24 @@
             margin-top: 12px;
             line-height: 1.5;
         }
-        .status-box {
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            margin-top: 10px;
-            display: none;
-        }
+        .status-box { padding: 10px; border-radius: 6px; font-size: 0.9rem; margin-top: 10px; display: none; }
         .status-box.success { background: rgba(34,197,94,0.2); color: var(--green); border: 1px solid var(--green); }
         .status-box.error { background: rgba(239,68,68,0.2); color: var(--red); border: 1px solid var(--red); }
+
+        .table-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding: 10px 0;
+            font-size: 0.88rem;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Header with View Switcher -->
+    <!-- Main Header Switcher -->
     <header>
         <div class="brand-title">🛍️ Cloud Commerce Platform</div>
         <div class="mode-toggle">
@@ -188,17 +169,17 @@
         </div>
 
         <div class="card">
-            <h2>📦 Submit Customer Order</h2>
-            <label>Your Name / Table / Order Ref</label>
-            <input type="text" id="cust-name" placeholder="e.g. Alex M.">
+            <h2>📦 Place Online Order</h2>
+            <label>Customer Name / Table Number</label>
+            <input type="text" id="cust-name" placeholder="e.g. Keith">
             
-            <label>Select Item</label>
+            <label>Select Product</label>
             <select id="cust-item-select"></select>
 
             <label>Quantity</label>
             <input type="number" id="cust-item-qty" value="1" min="1">
 
-            <button type="button" class="btn-action btn-success" onclick="submitCustomerOrder()">Place Order</button>
+            <button type="button" class="btn-action btn-success" onclick="submitCustomerOrder()">Submit Order</button>
             <div id="cust-status" class="status-box"></div>
         </div>
     </div>
@@ -206,23 +187,35 @@
     <!-- ================= RETAILER VIEW ================= -->
     <div id="retailer-view" class="view-panel">
         <div class="sub-nav">
-            <button class="active" onclick="switchRetailerTab('dashboard')">🤖 AI Dashboard</button>
+            <button class="active" onclick="switchRetailerTab('dashboard')">🤖 AI & Restock</button>
             <button onclick="switchRetailerTab('pos')">🛒 POS & Orders</button>
-            <button onclick="switchRetailerTab('inventory')">📦 Inventory</button>
-            <button onclick="switchRetailerTab('add-product')">➕ Add Item</button>
+            <button onclick="switchRetailerTab('inventory')">📦 Manage Stock</button>
+            <button onclick="switchRetailerTab('sales-history')">📊 Sales History</button>
         </div>
 
-        <!-- 1. AI Dashboard -->
+        <!-- 1. AI Forecast & Restock Reordering -->
         <div id="tab-dashboard" class="retailer-tab">
             <div class="card">
-                <h2>🤖 AI Predictive Reorder & Group Analysis</h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0;">Calculates burn rates, stockout timelines, and order advice per product group.</p>
+                <h2>🤖 AI Predictive Reorder Engine</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0;">Calculates sales velocity, stockout timelines, and supplier purchase orders.</p>
                 <button type="button" class="btn-action" onclick="runAiAnalysis()">Run AI Predictive Forecast</button>
-                <div id="ai-output">Click above to analyze inventory groups...</div>
+                <div id="ai-output">Click above to run analysis...</div>
+            </div>
+
+            <div class="card">
+                <h2>📥 Receive Supplier Restock</h2>
+                <label>Select Product to Restock</label>
+                <select id="restock-sku-select"></select>
+
+                <label>Quantity Received from Supplier</label>
+                <input type="number" id="restock-qty" value="10" min="1">
+
+                <button type="button" class="btn-action btn-success" onclick="processRestock()">Add Received Stock</button>
+                <div id="restock-status" class="status-box"></div>
             </div>
         </div>
 
-        <!-- 2. POS Checkout & Customer Orders -->
+        <!-- 2. POS Checkout & Live Orders -->
         <div id="tab-pos" class="retailer-tab" style="display: none;">
             <div class="card">
                 <h2>🛒 Quick Counter POS Checkout</h2>
@@ -238,37 +231,44 @@
 
             <div class="card">
                 <h2>📋 Live Customer Digital Orders</h2>
-                <button type="button" class="btn-action" onclick="loadCustomerOrders()" style="margin-bottom: 10px;">Refresh Pending Orders</button>
+                <button type="button" class="btn-action" onclick="loadCustomerOrders()" style="margin-bottom: 10px;">Refresh Orders</button>
                 <div id="pending-orders-list">Click refresh to load orders...</div>
             </div>
         </div>
 
-        <!-- 3. Inventory Table -->
+        <!-- 3. Stock Management & Item Deletion -->
         <div id="tab-inventory" class="retailer-tab" style="display: none;">
             <div class="card">
-                <h2>📦 Live Stock Directory</h2>
+                <h2>➕ Add New SKU</h2>
+                <label>SKU Code</label>
+                <input type="text" id="add-sku" placeholder="e.g. ITEM-01">
+                <label>Product Title</label>
+                <input type="text" id="add-title" placeholder="e.g. Wireless Keyboard">
+                <label>Current Stock</label>
+                <input type="number" id="add-stock" placeholder="20">
+                <label>Safety Threshold</label>
+                <input type="number" id="add-safety" placeholder="5">
+                <label>Cost Price (ZAR)</label>
+                <input type="number" id="add-cost" placeholder="150">
+                <label>Selling Price (ZAR)</label>
+                <input type="number" id="add-selling" placeholder="300">
+                <button type="button" class="btn-action" onclick="saveNewProduct()">Add Product to Supabase</button>
+                <div id="add-status" class="status-box"></div>
+            </div>
+
+            <div class="card">
+                <h2>📦 Live Stock Directory & Management</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0;">View inventory, modify quantities, or delete obsolete SKUs.</p>
                 <div id="retailer-inventory-list">Loading products...</div>
             </div>
         </div>
 
-        <!-- 4. Add Product -->
-        <div id="tab-add-product" class="retailer-tab" style="display: none;">
+        <!-- 4. Sales History & Ledger -->
+        <div id="tab-sales-history" class="retailer-tab" style="display: none;">
             <div class="card">
-                <h2>➕ Register New Product SKU</h2>
-                <label>SKU Code</label>
-                <input type="text" id="add-sku" placeholder="e.g. ELEC-005">
-                <label>Product Title</label>
-                <input type="text" id="add-title" placeholder="e.g. Wireless Mouse">
-                <label>Current Stock</label>
-                <input type="number" id="add-stock" placeholder="50">
-                <label>Safety Threshold</label>
-                <input type="number" id="add-safety" placeholder="10">
-                <label>Cost Price</label>
-                <input type="number" id="add-cost" placeholder="200">
-                <label>Selling Price</label>
-                <input type="number" id="add-selling" placeholder="350">
-                <button type="button" class="btn-action" onclick="saveNewProduct()">Add Product to Supabase</button>
-                <div id="add-status" class="status-box"></div>
+                <h2>📊 Transaction Ledger</h2>
+                <button type="button" class="btn-action" onclick="loadSalesHistory()" style="margin-bottom: 10px;">Refresh Sales Log</button>
+                <div id="sales-history-list">Click refresh to view ledger...</div>
             </div>
         </div>
     </div>
@@ -306,9 +306,10 @@
         document.querySelectorAll('.retailer-tab').forEach(t => t.style.display = 'none');
         document.getElementById(`tab-${tabName}`).style.display = 'block';
         if (tabName === 'pos') loadCustomerOrders();
+        if (tabName === 'sales-history') loadSalesHistory();
     }
 
-    // --- CUSTOMER VIEW LOGIC ---
+    // --- CUSTOMER VIEW ---
     async function loadCustomerCatalog() {
         const grid = document.getElementById("customer-catalog");
         const select = document.getElementById("cust-item-select");
@@ -319,11 +320,15 @@
             grid.innerHTML = "";
             select.innerHTML = "";
 
+            if (!globalProducts || globalProducts.length === 0) {
+                grid.innerText = "No items available in store right now.";
+                return;
+            }
+
             globalProducts.forEach(p => {
                 const stock = p.current_stock || 0;
                 const isLow = stock <= (p.safety_stock || 5);
                 
-                // Render Card
                 const card = document.createElement("div");
                 card.className = "product-card";
                 card.innerHTML = `
@@ -340,7 +345,6 @@
                 `;
                 grid.appendChild(card);
 
-                // Option for drop-down
                 if (stock > 0) {
                     const opt = document.createElement("option");
                     opt.value = p.sku;
@@ -404,31 +408,128 @@
             const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
             globalProducts = await res.json();
             
-            // Populate POS dropdown
+            // Populate POS & Restock Selectors
             const posSelect = document.getElementById("pos-select");
+            const restockSelect = document.getElementById("restock-sku-select");
+            
             posSelect.innerHTML = '<option value="">-- Choose Product --</option>';
+            restockSelect.innerHTML = '<option value="">-- Choose Product --</option>';
+
             globalProducts.forEach(p => {
-                const opt = document.createElement("option");
-                opt.value = p.sku;
-                opt.textContent = `${p.title} (Stock: ${p.current_stock}) - R${p.selling_price}`;
-                posSelect.appendChild(opt);
+                const opt1 = document.createElement("option");
+                opt1.value = p.sku;
+                opt1.textContent = `${p.title} (Stock: ${p.current_stock}) - R${p.selling_price}`;
+                posSelect.appendChild(opt1);
+
+                const opt2 = document.createElement("option");
+                opt2.value = p.sku;
+                opt2.textContent = `${p.title} (Current: ${p.current_stock})`;
+                restockSelect.appendChild(opt2);
             });
 
-            // Populate Inventory View
+            // Populate Detailed Inventory Table with Edit & Delete Options
             const invList = document.getElementById("retailer-inventory-list");
+            if (!globalProducts || globalProducts.length === 0) {
+                invList.innerHTML = "<p style='color: var(--text-muted); font-size: 0.85rem;'>No products in inventory yet.</p>";
+                return;
+            }
+
             let html = "";
             globalProducts.forEach(p => {
-                html += `<div style="border-bottom: 1px solid var(--border); padding: 8px 0; font-size: 0.9rem;">
-                    <b>${p.title}</b> (${p.sku})<br>
-                    Stock: <b>${p.current_stock}</b> | Safety: ${p.safety_stock} | Price: R${p.selling_price}
+                html += `<div class="table-row">
+                    <div>
+                        <b>${p.title}</b> (${p.sku})<br>
+                        <span style="color: var(--text-muted);">Stock: <b>${p.current_stock}</b> | Safety: ${p.safety_stock} | Price: R${p.selling_price}</span>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn-action btn-small" onclick="quickEditStock('${p.sku}', ${p.current_stock})">Set Stock</button>
+                        <button class="btn-action btn-danger btn-small" onclick="deleteProduct('${p.sku}', '${p.title}')">Delete</button>
+                    </div>
                 </div>`;
             });
-            invList.innerHTML = html || "No products found.";
+            invList.innerHTML = html;
         } catch(e) {
             console.error(e);
         }
     }
 
+    // --- DELETE & EDIT ITEM FUNCTIONS ---
+    async function deleteProduct(sku, title) {
+        if (!confirm(`Are you sure you want to delete '${title}' (${sku})? This cannot be undone.`)) return;
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products?sku=eq.${sku}`, {
+                method: "DELETE",
+                headers: { ...headers, "Prefer": "return=minimal" }
+            });
+
+            if (res.ok) {
+                alert(`✅ '${title}' deleted successfully.`);
+                loadRetailerData();
+            } else {
+                alert("Failed to delete item.");
+            }
+        } catch (err) {
+            alert("Network error.");
+        }
+    }
+
+    async function quickEditStock(sku, currentStock) {
+        const newStockStr = prompt(`Update stock count for SKU ${sku}:`, currentStock);
+        if (newStockStr === null) return;
+        const newStock = parseInt(newStockStr);
+        if (isNaN(newStock) || newStock < 0) return alert("Invalid stock number.");
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products?sku=eq.${sku}`, {
+                method: "PATCH",
+                headers: { ...headers, "Prefer": "return=minimal" },
+                body: JSON.stringify({ current_stock: newStock })
+            });
+
+            if (res.ok) {
+                loadRetailerData();
+            } else {
+                alert("Failed to update stock.");
+            }
+        } catch (err) {
+            alert("Network error.");
+        }
+    }
+
+    // --- RESTOCK SUPPLIER ORDER FUNCTION ---
+    async function processRestock() {
+        const sku = document.getElementById("restock-sku-select").value;
+        const qty = parseInt(document.getElementById("restock-qty").value);
+        const statusBox = document.getElementById("restock-status");
+
+        if (!sku || isNaN(qty) || qty <= 0) {
+            showMsg(statusBox, "Please select a product and enter a valid quantity.", true);
+            return;
+        }
+
+        const product = globalProducts.find(p => p.sku === sku);
+        const updatedStock = (product.current_stock || 0) + qty;
+
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/products?sku=eq.${sku}`, {
+                method: "PATCH",
+                headers: { ...headers, "Prefer": "return=minimal" },
+                body: JSON.stringify({ current_stock: updatedStock })
+            });
+
+            if (res.ok) {
+                showMsg(statusBox, `✅ Restocked +${qty} units for ${product.title}. New stock: ${updatedStock}`);
+                loadRetailerData();
+            } else {
+                showMsg(statusBox, "Failed to update restock.", true);
+            }
+        } catch (err) {
+            showMsg(statusBox, "Network error.", true);
+        }
+    }
+
+    // --- POS CHECKOUT & DIGITAL FULFILLMENT ---
     function calcPosTotal() {
         const sku = document.getElementById("pos-select").value;
         const qty = parseInt(document.getElementById("pos-qty").value) || 0;
@@ -488,7 +589,7 @@
                 html += `<div style="background: #0f172a; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
                     <b>Ref: ${o.order_code}</b> | Customer: ${o.customer_name}<br>
                     Item: ${o.items_json.title} (Qty: ${o.items_json.qty}) - <b>R${o.total_amount}</b><br>
-                    <button class="btn-action btn-success" style="padding: 6px; font-size: 0.8rem; margin-top: 6px;" onclick="fulfillOrder(${o.id}, '${o.items_json.sku}', ${o.items_json.qty}, '${o.items_json.title}', ${o.total_amount})">Fulfill & Deduct Stock</button>
+                    <button class="btn-action btn-success btn-small" style="margin-top: 6px;" onclick="fulfillOrder(${o.id}, '${o.items_json.sku}', ${o.items_json.qty}, '${o.items_json.title}', ${o.total_amount})">Fulfill & Deduct Stock</button>
                 </div>`;
             });
             listDiv.innerHTML = html;
@@ -506,32 +607,65 @@
 
         const newStock = product.current_stock - qty;
         try {
-            // 1. Update product stock
             await fetch(`${SUPABASE_URL}/rest/v1/products?sku=eq.${sku}`, {
                 method: "PATCH",
                 headers: { ...headers, "Prefer": "return=minimal" },
                 body: JSON.stringify({ current_stock: newStock })
             });
 
-            // 2. Log into sales history as Online channel
             await fetch(`${SUPABASE_URL}/rest/v1/sales_history`, {
                 method: "POST",
                 headers: { ...headers, "Prefer": "return=minimal" },
                 body: JSON.stringify({ sku: sku, title: title, quantity_sold: qty, total_price: total, channel: 'Online Storefront' })
             });
 
-            // 3. Update order status to Fulfilled
             await fetch(`${SUPABASE_URL}/rest/v1/customer_orders?id=eq.${orderId}`, {
                 method: "PATCH",
                 headers: { ...headers, "Prefer": "return=minimal" },
                 body: JSON.stringify({ status: "Fulfilled" })
             });
 
-            alert(`✅ Order fulfilled! Stock updated and logged to history.`);
+            alert(`✅ Order fulfilled! Stock updated and logged.`);
             loadCustomerOrders();
             loadRetailerData();
         } catch (err) {
             alert("Failed to fulfill order.");
+        }
+    }
+
+    // --- SALES HISTORY LEDGER ---
+    async function loadSalesHistory() {
+        const listDiv = document.getElementById("sales-history-list");
+        listDiv.innerText = "Fetching ledger...";
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/sales_history?select=*&order=sale_date.desc`, { headers });
+            const sales = await res.json();
+
+            if (!sales || sales.length === 0) {
+                listDiv.innerHTML = "<p style='color: var(--text-muted); font-size: 0.85rem;'>No sales recorded yet.</p>";
+                return;
+            }
+
+            let html = "";
+            let grandTotal = 0;
+            sales.forEach(s => {
+                grandTotal += parseFloat(s.total_price || 0);
+                const dateStr = new Date(s.sale_date).toLocaleString();
+                html += `<div class="table-row">
+                    <div>
+                        <b>${s.title}</b> (${s.sku})<br>
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">${dateStr} | Channel: <b>${s.channel}</b></span>
+                    </div>
+                    <div style="text-align: right;">
+                        <b>+R${s.total_price}</b><br>
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">Qty: ${s.quantity_sold}</span>
+                    </div>
+                </div>`;
+            });
+
+            listDiv.innerHTML = `<div style="padding: 10px; background: #0f172a; border-radius: 8px; margin-bottom: 12px; font-weight: bold; color: #60a5fa;">Total Revenue: R${grandTotal.toFixed(2)}</div>` + html;
+        } catch (err) {
+            listDiv.innerText = "Error loading ledger.";
         }
     }
 
@@ -586,26 +720,26 @@
                 const stock = p.current_stock || 0;
                 const safety = p.safety_stock || 5;
                 const pSales = sales.filter(s => s.sku === p.sku);
-                const totalSold = pSales.run ? 0 : pSales.reduce((sum, s) => sum + s.quantity_sold, 0);
+                const totalSold = pSales.reduce((sum, s) => sum + s.quantity_sold, 0);
 
                 let status = "🟢 [HEALTHY VELOCITY]";
                 let advice = "Stock level adequate across channels.";
 
                 if (stock <= safety) {
-                    status = "🔴 [CRITICAL REORDER]";
+                    status = "🔴 [CRITICAL REORDER NEEDED]";
                     const shortage = (safety * 2) - stock;
-                    advice = `Order ~${Math.max(shortage, 5)} units immediately to protect against stockout.`;
+                    advice = `PURCHASE ORDER: Order ~${Math.max(shortage, 5)} units from supplier immediately to protect against stockout.`;
                 } else if (pSales.length > 0) {
-                    const burnRate = (totalSold / pSales.length) * 0.5;
+                    const burnRate = (totalSold / Math.max(pSales.length, 1)) * 0.5;
                     const daysLeft = Math.floor(stock / Math.max(burnRate, 0.5));
                     advice = `Projected ~${daysLeft} days until stockout based on combined online/counter sales.`;
                 }
 
-                report += `[Group ${idx + 1}] ${p.title} (SKU: ${p.sku})\n`;
-                report += `  • Stock: ${stock} units | Safety Limit: ${safety}\n`;
-                report += `  • Combined Sales Volume: ${totalSold} units\n`;
+                report += `[SKU: ${p.sku}] ${p.title}\n`;
+                report += `  • Current Stock: ${stock} units | Safety Limit: ${safety}\n`;
+                report += `  • Sales Volume: ${totalSold} units\n`;
                 report += `  • Status: ${status}\n`;
-                report += `  • AI Insight: ${advice}\n----------------------------------------\n`;
+                report += `  • AI Purchase Recommendation: ${advice}\n----------------------------------------\n`;
             });
 
             output.innerText = report;
