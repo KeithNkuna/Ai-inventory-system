@@ -6,144 +6,218 @@
     <title>Unified Commerce Platform - ERP & Storefront</title>
     <style>
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
+            --bg: #090d16;
+            --card-bg: #131d31;
+            --card-border: #1e293b;
+            --card-hover: #172540;
             --text: #f8fafc;
             --text-muted: #94a3b8;
             --primary: #3b82f6;
             --primary-hover: #2563eb;
-            --green: #22c55e;
-            --red: #ef4444;
-            --yellow: #eab308;
-            --border: #334155;
+            --green: #10b981;
+            --red: #f43f5e;
+            --yellow: #f59e0b;
+            --radius: 16px;
         }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 12px;
+            padding: 16px;
+            line-height: 1.5;
         }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 600px; margin: 0 auto; padding-bottom: 40px; }
         
-        /* Header */
+        /* Modern Header & View Toggle */
         header {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.3);
+        }
+        .brand-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--card-bg);
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
+            margin-bottom: 12px;
         }
-        .brand-title { font-weight: bold; font-size: 1.1rem; color: #60a5fa; }
-        .mode-toggle { display: flex; background: var(--bg); padding: 4px; border-radius: 8px; }
+        .brand-title { font-weight: 800; font-size: 1.2rem; color: #60a5fa; letter-spacing: -0.5px; }
+        .mode-toggle {
+            display: flex;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            width: 100%;
+        }
         .mode-btn {
-            padding: 6px 12px;
+            flex: 1;
+            padding: 10px;
             border: none;
             background: transparent;
             color: var(--text-muted);
-            border-radius: 6px;
+            border-radius: 9px;
             cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
         }
-        .mode-btn.active { background: var(--primary); color: white; }
+        .mode-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 10px rgba(59,130,246,0.4); }
 
-        /* Navigation Tabs */
-        .sub-nav { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
+        /* Navigation Sub-Tabs */
+        .sub-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+        .sub-nav::-webkit-scrollbar { display: none; }
         .sub-nav button {
             background: var(--card-bg);
             color: var(--text-muted);
-            border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            padding: 10px 16px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 0.85rem;
+            font-weight: 600;
             white-space: nowrap;
+            transition: all 0.2s;
         }
-        .sub-nav button.active { background: #2563eb; color: white; border-color: #2563eb; }
+        .sub-nav button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+        }
 
         /* View Panels */
         .view-panel { display: none; }
-        .view-panel.active { display: block; }
+        .view-panel.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI Cards & Buttons */
+        /* Card Layouts */
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 20px -2px rgba(0,0,0,0.2);
         }
-        h2 { font-size: 1.1rem; margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; margin-top: 8px; }
+        h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 6px; font-weight: 700; color: #f1f5f9; }
+        .card-desc { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 16px; }
+
+        /* Form Inputs */
+        label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; margin-top: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         input, select {
             width: 100%;
-            padding: 10px;
-            background: #0f172a;
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
             color: white;
             font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
         }
+        input:focus, select:focus { border-color: var(--primary); }
+        
+        /* Action Buttons */
         .btn-action {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
+            padding: 13px 18px;
+            border-radius: 12px;
             font-size: 0.95rem;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+            transition: background 0.2s, transform 0.1s;
         }
+        .btn-action:active { transform: scale(0.98); }
         .btn-action:hover { background: var(--primary-hover); }
-        .btn-success { background: var(--green); }
-        .btn-danger { background: var(--red); }
-        .btn-small { width: auto; padding: 6px 12px; font-size: 0.8rem; margin-top: 0; }
+        .btn-success { background: var(--green); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--red); box-shadow: 0 4px 12px rgba(244,63,94,0.3); }
+        .btn-danger:hover { background: #e11d48; }
+        .btn-small { width: auto; padding: 8px 14px; font-size: 0.8rem; margin-top: 0; border-radius: 8px; }
         
-        /* Grid and Flex Containers */
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        /* Product Catalog Grid */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
         .product-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: background 0.2s;
         }
-        .product-title { font-weight: bold; font-size: 1rem; }
-        .product-price { color: #60a5fa; font-weight: bold; margin-top: 4px; }
-        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-        .badge-instock { background: rgba(34,197,94,0.2); color: var(--green); }
-        .badge-lowstock { background: rgba(239,68,68,0.2); color: var(--red); }
+        .product-card:hover { background: var(--card-hover); }
+        .product-title { font-weight: 700; font-size: 0.95rem; color: #f8fafc; }
+        .product-price { color: #60a5fa; font-weight: 800; font-size: 1.05rem; margin-top: 8px; }
         
-        #ai-output {
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 0.85rem;
-            white-space: pre-wrap;
-            border: 1px solid var(--border);
-            margin-top: 12px;
-            line-height: 1.5;
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
         }
-        .status-box { padding: 10px; border-radius: 6px; font-size: 0.9rem; margin-top: 10px; display: none; }
-        .status-box.success { background: rgba(34,197,94,0.2); color: var(--green); border: 1px solid var(--green); }
-        .status-box.error { background: rgba(239,68,68,0.2); color: var(--red); border: 1px solid var(--red); }
+        .badge-instock { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+        .badge-lowstock { background: rgba(244,63,94,0.15); color: var(--red); border: 1px solid rgba(244,63,94,0.3); }
+        
+        /* AI Output Box */
+        #ai-output {
+            background: var(--bg);
+            padding: 14px;
+            border-radius: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.82rem;
+            white-space: pre-wrap;
+            border: 1px solid var(--card-border);
+            margin-top: 14px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
 
+        /* Status Alerts */
+        .status-box {
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-top: 14px;
+            display: none;
+            border: 1px solid transparent;
+        }
+        .status-box.success { background: rgba(16,185,129,0.15); color: var(--green); border-color: rgba(16,185,129,0.3); }
+        .status-box.error { background: rgba(244,63,94,0.15); color: var(--red); border-color: rgba(244,63,94,0.3); }
+
+        /* Table List Rows */
         .table-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding: 10px 0;
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
             font-size: 0.88rem;
         }
     </style>
@@ -151,9 +225,11 @@
 <body>
 
 <div class="container">
-    <!-- Main Header Switcher -->
+    <!-- Header with Toggle -->
     <header>
-        <div class="brand-title">🛍️ Cloud Commerce Platform</div>
+        <div class="brand-row">
+            <div class="brand-title">🛍️ Cloud Commerce</div>
+        </div>
         <div class="mode-toggle">
             <button class="mode-btn active" onclick="switchMainView('customer')">📱 Customer View</button>
             <button class="mode-btn" onclick="switchMainView('retailer')">🏬 Retailer View</button>
@@ -163,14 +239,16 @@
     <!-- ================= CUSTOMER VIEW ================= -->
     <div id="customer-view" class="view-panel active">
         <div class="card">
-            <h2>🛒 Storefront Product Catalog</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0;">Browse available inventory and submit direct digital orders.</p>
+            <h2>Store Catalog</h2>
+            <div class="card-desc">Browse live inventory items available for instant order.</div>
             <div id="customer-catalog" class="product-grid">Loading catalog...</div>
         </div>
 
         <div class="card">
-            <h2>📦 Place Online Order</h2>
-            <label>Customer Name / Table Number</label>
+            <h2>Place Online Order</h2>
+            <div class="card-desc">Submit your digital order directly to the retailer counter.</div>
+            
+            <label>Customer Name / Table</label>
             <input type="text" id="cust-name" placeholder="e.g. Keith">
             
             <label>Select Product</label>
@@ -188,26 +266,28 @@
     <div id="retailer-view" class="view-panel">
         <div class="sub-nav">
             <button class="active" onclick="switchRetailerTab('dashboard')">🤖 AI & Restock</button>
-            <button onclick="switchRetailerTab('pos')">🛒 POS & Orders</button>
-            <button onclick="switchRetailerTab('inventory')">📦 Manage Stock</button>
-            <button onclick="switchRetailerTab('sales-history')">📊 Sales History</button>
+            <button onclick="switchRetailerTab('pos')">🛒 POS Checkout</button>
+            <button onclick="switchRetailerTab('inventory')">📦 Inventory</button>
+            <button onclick="switchRetailerTab('sales-history')">📊 Sales Ledger</button>
         </div>
 
-        <!-- 1. AI Forecast & Restock Reordering -->
+        <!-- 1. AI Dashboard & Restock -->
         <div id="tab-dashboard" class="retailer-tab">
             <div class="card">
-                <h2>🤖 AI Predictive Reorder Engine</h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0;">Calculates sales velocity, stockout timelines, and supplier purchase orders.</p>
-                <button type="button" class="btn-action" onclick="runAiAnalysis()">Run AI Predictive Forecast</button>
-                <div id="ai-output">Click above to run analysis...</div>
+                <h2>AI Predictive Reorder Engine</h2>
+                <div class="card-desc">Analyze burn rates and generate supplier reorder advice.</div>
+                <button type="button" class="btn-action" onclick="runAiAnalysis()">Run AI Forecast</button>
+                <div id="ai-output">Click above to analyze inventory health...</div>
             </div>
 
             <div class="card">
-                <h2>📥 Receive Supplier Restock</h2>
-                <label>Select Product to Restock</label>
+                <h2>Receive Supplier Restock</h2>
+                <div class="card-desc">Log incoming stock shipments from your suppliers.</div>
+                
+                <label>Select Product</label>
                 <select id="restock-sku-select"></select>
 
-                <label>Quantity Received from Supplier</label>
+                <label>Quantity Received</label>
                 <input type="number" id="restock-qty" value="10" min="1">
 
                 <button type="button" class="btn-action btn-success" onclick="processRestock()">Add Received Stock</button>
@@ -215,59 +295,74 @@
             </div>
         </div>
 
-        <!-- 2. POS Checkout & Live Orders -->
+        <!-- 2. POS & Orders -->
         <div id="tab-pos" class="retailer-tab" style="display: none;">
             <div class="card">
-                <h2>🛒 Quick Counter POS Checkout</h2>
+                <h2>Counter POS Checkout</h2>
+                <div class="card-desc">Process in-store walk-in cash or card sales.</div>
+                
                 <label>Select Product</label>
                 <select id="pos-select" onchange="calcPosTotal()"></select>
+                
                 <label>Quantity Sold</label>
                 <input type="number" id="pos-qty" value="1" min="1" oninput="calcPosTotal()">
+                
                 <label>Total Price (ZAR)</label>
-                <input type="number" id="pos-total" readonly>
+                <input type="number" id="pos-total" readonly style="background: var(--bg); font-weight: bold; color: #60a5fa;">
+                
                 <button type="button" class="btn-action btn-success" onclick="processPosSale()">Complete In-Store Sale</button>
                 <div id="pos-status" class="status-box"></div>
             </div>
 
             <div class="card">
-                <h2>📋 Live Customer Digital Orders</h2>
-                <button type="button" class="btn-action" onclick="loadCustomerOrders()" style="margin-bottom: 10px;">Refresh Orders</button>
+                <h2>Live Customer Digital Orders</h2>
+                <div class="card-desc">Fulfill web orders placed through the customer storefront.</div>
+                <button type="button" class="btn-action" onclick="loadCustomerOrders()" style="margin-bottom: 14px; margin-top: 0;">Refresh Orders</button>
                 <div id="pending-orders-list">Click refresh to load orders...</div>
             </div>
         </div>
 
-        <!-- 3. Stock Management & Item Deletion -->
+        <!-- 3. Inventory Management -->
         <div id="tab-inventory" class="retailer-tab" style="display: none;">
             <div class="card">
-                <h2>➕ Add New SKU</h2>
+                <h2>Register New SKU</h2>
+                <div class="card-desc">Add a new product into your Supabase database.</div>
+                
                 <label>SKU Code</label>
                 <input type="text" id="add-sku" placeholder="e.g. ITEM-01">
+                
                 <label>Product Title</label>
                 <input type="text" id="add-title" placeholder="e.g. Wireless Keyboard">
+                
                 <label>Current Stock</label>
                 <input type="number" id="add-stock" placeholder="20">
+                
                 <label>Safety Threshold</label>
                 <input type="number" id="add-safety" placeholder="5">
+                
                 <label>Cost Price (ZAR)</label>
                 <input type="number" id="add-cost" placeholder="150">
+                
                 <label>Selling Price (ZAR)</label>
                 <input type="number" id="add-selling" placeholder="300">
-                <button type="button" class="btn-action" onclick="saveNewProduct()">Add Product to Supabase</button>
+                
+                <button type="button" class="btn-action" onclick="saveNewProduct()">Add Product to Database</button>
                 <div id="add-status" class="status-box"></div>
             </div>
 
             <div class="card">
-                <h2>📦 Live Stock Directory & Management</h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0;">View inventory, modify quantities, or delete obsolete SKUs.</p>
+                <h2>Live Stock Directory</h2>
+                <div class="card-desc">Manage levels or remove obsolete items.</div>
                 <div id="retailer-inventory-list">Loading products...</div>
             </div>
         </div>
 
-        <!-- 4. Sales History & Ledger -->
+        <!-- 4. Sales History -->
         <div id="tab-sales-history" class="retailer-tab" style="display: none;">
             <div class="card">
-                <h2>📊 Transaction Ledger</h2>
-                <button type="button" class="btn-action" onclick="loadSalesHistory()" style="margin-bottom: 10px;">Refresh Sales Log</button>
+                <h2>Transaction Ledger</h2>
+                <div class="card-desc">Track all POS counter sales and online fulfillments.</div>
+                <button type="button" class="btn-action" onclick="loadSalesHistory()" style="margin-bottom: 14px; margin-top: 0;">Refresh Ledger</button>
                 <div id="sales-history-list">Click refresh to view ledger...</div>
             </div>
         </div>
@@ -285,7 +380,6 @@
 
     let globalProducts = [];
 
-    // --- NAVIGATION SWITCHERS ---
     function switchMainView(mode) {
         document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
@@ -309,7 +403,6 @@
         if (tabName === 'sales-history') loadSalesHistory();
     }
 
-    // --- CUSTOMER VIEW ---
     async function loadCustomerCatalog() {
         const grid = document.getElementById("customer-catalog");
         const select = document.getElementById("cust-item-select");
@@ -334,11 +427,11 @@
                 card.innerHTML = `
                     <div>
                         <div class="product-title">${p.title}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">SKU: ${p.sku}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">SKU: ${p.sku}</div>
                     </div>
-                    <div style="margin-top: 10px;">
+                    <div style="margin-top: 12px;">
                         <span class="badge ${isLow ? 'badge-lowstock' : 'badge-instock'}">
-                            ${stock > 0 ? stock + ' units available' : 'Out of Stock'}
+                            ${stock > 0 ? stock + ' left' : 'Sold Out'}
                         </span>
                         <div class="product-price">R${p.selling_price}</div>
                     </div>
@@ -348,7 +441,7 @@
                 if (stock > 0) {
                     const opt = document.createElement("option");
                     opt.value = p.sku;
-                    opt.textContent = `${p.title} - R${p.selling_price}`;
+                    opt.textContent = `${p.title} - R${p.selling_price} (${stock} avail)`;
                     select.appendChild(opt);
                 }
             });
@@ -402,13 +495,11 @@
         }
     }
 
-    // --- RETAILER VIEW LOGIC ---
     async function loadRetailerData() {
         try {
             const res = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*`, { headers });
             globalProducts = await res.json();
             
-            // Populate POS & Restock Selectors
             const posSelect = document.getElementById("pos-select");
             const restockSelect = document.getElementById("restock-sku-select");
             
@@ -427,7 +518,6 @@
                 restockSelect.appendChild(opt2);
             });
 
-            // Populate Detailed Inventory Table with Edit & Delete Options
             const invList = document.getElementById("retailer-inventory-list");
             if (!globalProducts || globalProducts.length === 0) {
                 invList.innerHTML = "<p style='color: var(--text-muted); font-size: 0.85rem;'>No products in inventory yet.</p>";
@@ -438,12 +528,12 @@
             globalProducts.forEach(p => {
                 html += `<div class="table-row">
                     <div>
-                        <b>${p.title}</b> (${p.sku})<br>
-                        <span style="color: var(--text-muted);">Stock: <b>${p.current_stock}</b> | Safety: ${p.safety_stock} | Price: R${p.selling_price}</span>
+                        <div style="font-weight: 700; color: #f8fafc;">${p.title}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">SKU: ${p.sku} | Stock: <b style="color: #fff;">${p.current_stock}</b> | Price: R${p.selling_price}</div>
                     </div>
                     <div style="display: flex; gap: 6px;">
-                        <button class="btn-action btn-small" onclick="quickEditStock('${p.sku}', ${p.current_stock})">Set Stock</button>
-                        <button class="btn-action btn-danger btn-small" onclick="deleteProduct('${p.sku}', '${p.title}')">Delete</button>
+                        <button class="btn-action btn-small" onclick="quickEditStock('${p.sku}', ${p.current_stock})">Edit</button>
+                        <button class="btn-action btn-danger btn-small" onclick="deleteProduct('${p.sku}', '${p.title}')">Del</button>
                     </div>
                 </div>`;
             });
@@ -453,9 +543,8 @@
         }
     }
 
-    // --- DELETE & EDIT ITEM FUNCTIONS ---
     async function deleteProduct(sku, title) {
-        if (!confirm(`Are you sure you want to delete '${title}' (${sku})? This cannot be undone.`)) return;
+        if (!confirm(`Permanently delete '${title}' (${sku})?`)) return;
 
         try {
             const res = await fetch(`${SUPABASE_URL}/rest/v1/products?sku=eq.${sku}`, {
@@ -464,7 +553,6 @@
             });
 
             if (res.ok) {
-                alert(`✅ '${title}' deleted successfully.`);
                 loadRetailerData();
             } else {
                 alert("Failed to delete item.");
@@ -497,14 +585,13 @@
         }
     }
 
-    // --- RESTOCK SUPPLIER ORDER FUNCTION ---
     async function processRestock() {
         const sku = document.getElementById("restock-sku-select").value;
         const qty = parseInt(document.getElementById("restock-qty").value);
         const statusBox = document.getElementById("restock-status");
 
         if (!sku || isNaN(qty) || qty <= 0) {
-            showMsg(statusBox, "Please select a product and enter a valid quantity.", true);
+            showMsg(statusBox, "Please select a product and valid quantity.", true);
             return;
         }
 
@@ -519,7 +606,7 @@
             });
 
             if (res.ok) {
-                showMsg(statusBox, `✅ Restocked +${qty} units for ${product.title}. New stock: ${updatedStock}`);
+                showMsg(statusBox, `✅ Restocked +${qty} units. New total: ${updatedStock}`);
                 loadRetailerData();
             } else {
                 showMsg(statusBox, "Failed to update restock.", true);
@@ -529,7 +616,6 @@
         }
     }
 
-    // --- POS CHECKOUT & DIGITAL FULFILLMENT ---
     function calcPosTotal() {
         const sku = document.getElementById("pos-select").value;
         const qty = parseInt(document.getElementById("pos-qty").value) || 0;
@@ -565,7 +651,7 @@
                 body: JSON.stringify({ sku: sku, title: product.title, quantity_sold: qty, total_price: total, channel: 'Counter POS' })
             });
 
-            showMsg(statusBox, `✅ Counter Sale completed for ${qty}x ${product.title}`);
+            showMsg(statusBox, `✅ Completed Sale: ${qty}x ${product.title}`);
             loadRetailerData();
         } catch (err) {
             showMsg(statusBox, "Checkout failed.", true);
@@ -580,16 +666,16 @@
             const orders = await res.json();
 
             if (!orders || orders.length === 0) {
-                listDiv.innerHTML = "<p style='color: var(--text-muted); font-size: 0.85rem;'>No pending online orders right now.</p>";
+                listDiv.innerHTML = "<p style='color: var(--text-muted); font-size: 0.85rem;'>No pending online orders.</p>";
                 return;
             }
 
             let html = "";
             orders.forEach(o => {
-                html += `<div style="background: #0f172a; padding: 10px; border-radius: 6px; margin-bottom: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                html += `<div style="background: var(--bg); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--card-border); font-size: 0.85rem;">
                     <b>Ref: ${o.order_code}</b> | Customer: ${o.customer_name}<br>
-                    Item: ${o.items_json.title} (Qty: ${o.items_json.qty}) - <b>R${o.total_amount}</b><br>
-                    <button class="btn-action btn-success btn-small" style="margin-top: 6px;" onclick="fulfillOrder(${o.id}, '${o.items_json.sku}', ${o.items_json.qty}, '${o.items_json.title}', ${o.total_amount})">Fulfill & Deduct Stock</button>
+                    Item: ${o.items_json.title} (Qty: ${o.items_json.qty}) - <b style="color: #60a5fa;">R${o.total_amount}</b><br>
+                    <button class="btn-action btn-success btn-small" style="margin-top: 8px;" onclick="fulfillOrder(${o.id}, '${o.items_json.sku}', ${o.items_json.qty}, '${o.items_json.title}', ${o.total_amount})">Fulfill Order</button>
                 </div>`;
             });
             listDiv.innerHTML = html;
@@ -601,7 +687,7 @@
     async function fulfillOrder(orderId, sku, qty, title, total) {
         const product = globalProducts.find(p => p.sku === sku);
         if (!product || qty > product.current_stock) {
-            alert("Error: Insufficient stock to fulfill order!");
+            alert("Error: Insufficient stock!");
             return;
         }
 
@@ -625,7 +711,7 @@
                 body: JSON.stringify({ status: "Fulfilled" })
             });
 
-            alert(`✅ Order fulfilled! Stock updated and logged.`);
+            alert(`✅ Order fulfilled successfully!`);
             loadCustomerOrders();
             loadRetailerData();
         } catch (err) {
@@ -633,7 +719,6 @@
         }
     }
 
-    // --- SALES HISTORY LEDGER ---
     async function loadSalesHistory() {
         const listDiv = document.getElementById("sales-history-list");
         listDiv.innerText = "Fetching ledger...";
@@ -653,17 +738,17 @@
                 const dateStr = new Date(s.sale_date).toLocaleString();
                 html += `<div class="table-row">
                     <div>
-                        <b>${s.title}</b> (${s.sku})<br>
-                        <span style="color: var(--text-muted); font-size: 0.8rem;">${dateStr} | Channel: <b>${s.channel}</b></span>
+                        <div style="font-weight: 700;">${s.title}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">${dateStr} • Channel: <span style="color: #60a5fa;">${s.channel}</span></div>
                     </div>
                     <div style="text-align: right;">
-                        <b>+R${s.total_price}</b><br>
-                        <span style="color: var(--text-muted); font-size: 0.8rem;">Qty: ${s.quantity_sold}</span>
+                        <div style="font-weight: 700; color: #10b981;">+R${s.total_price}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Qty: ${s.quantity_sold}</div>
                     </div>
                 </div>`;
             });
 
-            listDiv.innerHTML = `<div style="padding: 10px; background: #0f172a; border-radius: 8px; margin-bottom: 12px; font-weight: bold; color: #60a5fa;">Total Revenue: R${grandTotal.toFixed(2)}</div>` + html;
+            listDiv.innerHTML = `<div style="padding: 12px; background: var(--bg); border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 12px; font-weight: 700; color: #60a5fa; font-size: 0.95rem;">Total Revenue: R${grandTotal.toFixed(2)}</div>` + html;
         } catch (err) {
             listDiv.innerText = "Error loading ledger.";
         }
@@ -679,7 +764,7 @@
         const statusBox = document.getElementById("add-status");
 
         if (!sku || !title || isNaN(stock)) {
-            showMsg(statusBox, "Please fill in the required fields.", true);
+            showMsg(statusBox, "Please fill in all required fields.", true);
             return;
         }
 
@@ -703,7 +788,7 @@
 
     async function runAiAnalysis() {
         const output = document.getElementById("ai-output");
-        output.innerText = "🤖 Analyzing sales history & computing velocity...";
+        output.innerText = "🤖 Analyzing sales velocity & stock levels...";
 
         try {
             const [pRes, sRes] = await Promise.all([
@@ -728,18 +813,18 @@
                 if (stock <= safety) {
                     status = "🔴 [CRITICAL REORDER NEEDED]";
                     const shortage = (safety * 2) - stock;
-                    advice = `PURCHASE ORDER: Order ~${Math.max(shortage, 5)} units from supplier immediately to protect against stockout.`;
+                    advice = `PURCHASE ORDER: Order ~${Math.max(shortage, 5)} units from supplier immediately.`;
                 } else if (pSales.length > 0) {
                     const burnRate = (totalSold / Math.max(pSales.length, 1)) * 0.5;
                     const daysLeft = Math.floor(stock / Math.max(burnRate, 0.5));
-                    advice = `Projected ~${daysLeft} days until stockout based on combined online/counter sales.`;
+                    advice = `Projected ~${daysLeft} days until stockout based on sales volume.`;
                 }
 
                 report += `[SKU: ${p.sku}] ${p.title}\n`;
                 report += `  • Current Stock: ${stock} units | Safety Limit: ${safety}\n`;
                 report += `  • Sales Volume: ${totalSold} units\n`;
                 report += `  • Status: ${status}\n`;
-                report += `  • AI Purchase Recommendation: ${advice}\n----------------------------------------\n`;
+                report += `  • Recommendation: ${advice}\n----------------------------------------\n`;
             });
 
             output.innerText = report;
